@@ -5,50 +5,86 @@ Created on Feb 15, 2017
 '''
 import csv
 
+
+
+
 with open('ChildCareCentersDataset.csv', 'r') as file:
     reader = csv.reader(file)
     centers_list = list(reader)
+    num_rows = len(centers_list)
 
-entry = centers_list[2923]
+new_centers_list = []
 
-#print(entry)
+new_centers_list.append(centers_list[0])
+#print new_centers_list[0]
 
-#print(entry[2])
-#print(entry[3])
+for x in range(9000, num_rows): #num_rows
+    #print x
 
-from geopy.geocoders import Nominatim
-geolocator = Nominatim()
-location = geolocator.geocode(str(entry[3]))
+    currentEntry = centers_list[x]
 
-#print"Address search returned:"
-#print location.address
-#print "Gps coordinates: Lat, Long"
-lat = location.latitude
-lon = location.longitude
-#print lat, lon
+    #print(currentEntry)
 
-entry.pop(21)
-entry.pop(20)
+#    print(currentEntry[3])
+#    print(currentEntry[3])
+#    print(currentEntry[4])
 
-entry.insert(20, lat)
-entry.insert(21, lon)
+    from geopy.geocoders import Nominatim
+    geolocator = Nominatim()
+    location = geolocator.geocode(  str(currentEntry[3]),exactly_one=True, timeout=999 )
 
-#print(entry)
+    #print"Address search returned:"
 
-#center_list.pop(2923)
-centers_list.insert(2923, entry)
 
-#print centers_list[2923]
+    '''
 
-with open('ChildCareCentersEdited.csv', 'wb') as newFile:
-    writer = csv.writer(newFile, delimiter=',', quoting=csv.QUOTE_ALL)
-    writer.writerows(centers_list)
 
+    print "Gps coordinates: Lat, Long"
+    '''
+
+
+
+    if location is None:
+        lat = 0
+        lon = 0
+        #print "No Address"
+    else:
+        lat = location.latitude
+        lon = location.longitude
+        #print location.address
+
+    #print lat, lon
+
+    currentEntry.pop(21)
+    currentEntry.pop(20)
+
+
+
+    currentEntry.insert(20, lat)
+    currentEntry.insert(21, lon)
+    #print(currentEntry)
+
+    #centers_list.pop(x)
+    new_centers_list.insert(x, currentEntry)
+    #print new_centers_list[x]
+
+
+    with open('ChildCareCentersEdited.csv', 'wb') as newFile:
+        writer = csv.writer(newFile, delimiter=',', quoting=csv.QUOTE_ALL)
+        writer.writerows(new_centers_list)
+
+    print "" + str(x) + " " + str(lat) + " " +str(lon)
+
+
+
+'''
 with open('ChildCareCentersEdited.csv', 'r') as testFile:
     newReader = csv.reader(testFile)
     test_list = list(newReader)
 
 
 
+
 print(test_list[0])
 print(test_list[2923])
+'''
